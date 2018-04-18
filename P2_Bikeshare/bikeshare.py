@@ -17,10 +17,19 @@ def get_filters():
     """
     print('Hello! Let\'s explore some US bikeshare data!')
     # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
+    while True:
+        city = input('Would you like to see data for Chicago, New York, or Washington?\n').lower()
+        if city == "new york":
+            city = "new york city"
+        if city in CITY_DATA:
+            break
+        else:
+            print('Uphs! Wrong input! Try again!')
 
 
+    choice = input('Would you like to filter the data by month, day, or not at all? Type "none" for no time filter.\n')
     # get user input for month (all, january, february, ... , june)
-
+    city = input('Would you like to see data for Chicago, New York, or Washington?\n')
 
     # get user input for day of week (all, monday, tuesday, ... sunday)
 
@@ -41,6 +50,30 @@ def load_data(city, month, day):
         df - Pandas DataFrame containing city data filtered by month and day
     """
 
+    # load data file into a dataframe
+    df = pd.read_csv(CITY_DATA[city])
+
+    # convert the Start Time column to datetime
+    df['Start Time'] = pd.to_datetime(df['Start Time'])
+
+    # extract month and day of week from Start Time to create new columns
+    df['month'] = df['Start Time'].dt.month
+    df['day_of_week'] = df['Start Time'].dt.weekday_name
+
+
+    # filter by month if applicable
+    if month != 'all':
+        # use the index of the months list to get the corresponding int
+        months = ['january', 'february', 'march', 'april', 'may', 'june']
+        month = months.index(month)+1
+
+        # filter by month to create the new dataframe
+        df = df[df['month'] == month]
+
+    # filter by day of week if applicable
+    if day != 'all':
+        # filter by day of week to create the new dataframe
+        df = df = df[df['day_of_week'] == day.title()]
 
     return df
 
