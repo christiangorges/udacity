@@ -18,7 +18,7 @@ def get_filters():
         (str) month - name of the month to filter by, or "all" to apply no month filter
         (str) day - name of the day of week to filter by, or "all" to apply no day filter
     """
-    print('Hello! Let\'s explore some US bikeshare data!')
+    print('\nHello! Let\'s explore some US bikeshare data!')
     # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
     while True:
         city = input('Would you like to see data for Chicago, New York, or Washington?\n').lower()
@@ -35,7 +35,7 @@ def get_filters():
     day = "all"
 
     while True:
-        choice = input('Would you like to filter the data by month, day, both, or not at all? Type "none" for no time filter.\n').lower()
+        choice = input('\nWould you like to filter the data by month, day, both, or not at all? Type "none" for no time filter.\n').lower()
         if choice in ["month", "day", "both", "none"]:
             break
         else:
@@ -43,7 +43,7 @@ def get_filters():
 
     if choice == "month":
         while True:
-            month = input('Which month? January, February, March, April, May, or June?\n').lower()
+            month = input('\nWhich month? January, February, March, April, May, or June?\n').lower()
             if month in MONTH_LIST:
                 break
             else:
@@ -51,7 +51,7 @@ def get_filters():
 
     elif choice == "day":
         while True:
-            day = input('Which day? Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday?\n').lower()
+            day = input('\nWhich day? Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday?\n').lower()
             if day in DAY_LIST:
                 break
             else:
@@ -59,14 +59,14 @@ def get_filters():
 
     elif choice == "both":
         while True:
-            month = input('Which month? January, February, March, April, May, or June?\n').lower()
+            month = input('\nWhich month? January, February, March, April, May, or June?\n').lower()
             if month in MONTH_LIST:
                 break
             else:
                 print('Uphs! Wrong input! Try again!\n')
 
         while True:
-            day = input('Which day? Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday?\n').lower()
+            day = input('\nWhich day? Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday?\n').lower()
             if day in DAY_LIST:
                 break
             else:
@@ -115,8 +115,8 @@ def load_data(city, month, day):
         df = df = df[df['day_of_week'] == day.title()]
 
     # uncomment for testing
-    print(df.head())
-    print(df.info())
+    # print(df.head())
+    # print(df.info())
 
     return df
 
@@ -137,7 +137,8 @@ def time_stats(df):
 
     # display the most common start hour
     popular_hour = df['hour'].mode()[0]
-    print('Most Popular Start Hour:', popular_hour)
+    popular_hour_count = len(df[df["hour"]==popular_hour])
+    print('Most Popular Start Hour: {} ({} Rides)'.format(popular_hour,popular_hour_count))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -151,16 +152,18 @@ def station_stats(df):
 
     # display most commonly used start station
     popular_start_station = df['Start Station'].mode()[0]
-    print('Most Popular Start Station:', popular_start_station)
+    popular_start_station_count = len(df[df["Start Station"]==popular_start_station])
+    print('Most Popular Start Station: {} ({} Rides)'.format(popular_start_station,popular_start_station_count))
 
     # display most commonly used end station
     popular_end_station = df['End Station'].mode()[0]
-    print('Most Popular End Station:', popular_end_station)
+    popular_end_station_count = len(df[df["End Station"]==popular_end_station])
+    print('Most Popular End Station: {} ({} Rides)'.format(popular_end_station,popular_end_station_count))
 
     # display most frequent combination of start station and end station trip
     popular_combination = df.groupby(['Start Station','End Station']).size().reset_index(name='counts').sort_values(by='counts',ascending=False).iloc[0]
     #print(popular_combination)
-    print('Most Popular Combination is from {} to {} ({} times)'.format(popular_combination.loc["Start Station"],popular_combination.loc["End Station"],popular_combination.loc["counts"]))
+    print('Most Popular Combination is from {} to {} ({} Rides)'.format(popular_combination.loc["Start Station"],popular_combination.loc["End Station"],popular_combination.loc["counts"]))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -220,6 +223,18 @@ def user_stats(df,city):
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
+def user_data(df):
+    """Displays raw user data."""
+
+    i = 0
+    while True:
+        choice = input('\nWould you like to see raw user data? yes/no\n').lower()
+        if (choice == "yes") or (choice == "y"):
+            print("\n", df.iloc[i])
+            print('-'*40)
+            i += 1
+        else:
+            break
 
 def main():
     while True:
@@ -230,9 +245,10 @@ def main():
         station_stats(df)
         trip_duration_stats(df)
         user_stats(df,city)
+        user_data(df)
 
-        restart = input('\nWould you like to restart? Enter yes or no.\n')
-        if restart.lower() != 'yes':
+        restart = input('\nWould you like to restart? Enter yes or no.\n').lower()
+        if restart != 'yes':
             break
 
 
